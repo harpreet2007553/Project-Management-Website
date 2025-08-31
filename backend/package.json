@@ -1,0 +1,16 @@
+{
+  "name": "project_management_backend",
+  "version": "1.0.0",
+  "description": "practicing node js by creating project management website",
+  "keywords": [
+    "javascript",
+    "backend"
+  ],
+  "license": "ISC",
+  "author": "Ronak",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  }
+}

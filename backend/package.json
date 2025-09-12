@@ -1,15 +1,15 @@
 {
-  "name": "project_management_backend",
+  "name": "backend-pm",
   "version": "1.0.0",
-  "description": "practicing node js by creating project management website",
+  "description": "it is a backend server for project management website",
   "keywords": [
-    "javascript",
-    "backend"
+    "backend",
+    "typescript"
   ],
   "license": "ISC",
-  "author": "Ronak",
-  "type": "commonjs",
-  "main": "index.js",
+  "author": "Ronak/Harpreet Singh",
+  "type": "module",
+  "main": "index.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   }

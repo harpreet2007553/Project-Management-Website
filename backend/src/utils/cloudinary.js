@@ -8,12 +8,6 @@ cloudinary.config({
   api_secret: `${process.env.CLOUDINARY_API_SECRET}`,
 });
 
-// cloudinary.config({
-//   cloud_name:'depgyj8gq',
-//   api_key: '479119349384733',
-//   api_secret: '1EWTG_EPHwPLQ_vxRHwyiQnflAU',
-// });
-
 export const uploadOnCloudinary = async (localFilePath) => {
   try {
     if (!localFilePath) return "Please enter a local file path";

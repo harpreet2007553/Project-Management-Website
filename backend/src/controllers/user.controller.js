@@ -1,7 +1,6 @@
 import { User } from "../model/user.model.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import jwt from "jsonwebtoken"
-// import { Express } from "express";
 import { ApiError } from "../utils/apiError.js";
 import { uploadOnCloudinary } from "../utils/cloudinary.js";
 
@@ -23,6 +22,28 @@ const generateAccessRefreshToken = async (userId) => {
       throw new ApiError(500, "Something went wrong while generating refresh and access token")
     }
 }
+
+const requestNewAccessRefreshToken = asyncHandler(
+  async (req, res) => {
+
+    const {userId} = req.body;
+    const {accessToken , refreshToken} = generateAccessRefreshToken(userId);
+
+    const options = {
+      httpOnly : true,
+      secure : true
+    }
+
+    res
+    .status(201)
+    .json({
+        success: true,
+        message : "New access token and refresh token are successfully generated"
+    })
+    .cookie("accessToken", accessToken, options)
+    .cookie("refreshToken", refreshToken, options)
+  }
+)
 
 export const registerUser = asyncHandler(
   async (req, res) => {

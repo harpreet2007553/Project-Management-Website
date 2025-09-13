@@ -20,10 +20,15 @@ export const verifyJWT = async (req, res, next) => {
       process.env.REFRESH_TOKEN_KEY
     );
     if (!decodedRefreshToken) {
-      throw new ApiError(401, "please login again...");
+      throw new ApiError(401, "Both tokens are expired");
     }
     const user = await User.findById(decodedRefreshToken.id);
     req.user = user._id;
     next();
   }
+
+  const user = await user.findById(decodedAccessToken.id);
+  req.user = user._id;
+  next();
+
 };

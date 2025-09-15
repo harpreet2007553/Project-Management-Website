@@ -25,10 +25,6 @@ const userSchema = new Schema(
       lowercase: true,
       trim: true,
     },
-    projects : {
-        type : Schema.Types.ObjectId,
-        ref : "Project"
-    },
     password: {
       type: String,
       required: true,
@@ -50,12 +46,13 @@ userSchema.pre("save", async function (next) {
   next();
 });
 
-userSchema.method.isPasswordCorrect = async () => {
-    return await bcrypt.compare(password, this.password);
+userSchema.methods.isPasswordCorrect = async function(password){
+    return  bcrypt.compare(password, this.password);
 }
 
-userSchema.method.generateAccessToken = () => {
-    const token = jwt.sign({ 
+userSchema.methods.generateAccessToken = function () {
+    console.log("userid : ",this._id)
+    const token =  jwt.sign({ 
         id: this._id ,
         username : this.username ,
         email : this.email
@@ -64,8 +61,8 @@ userSchema.method.generateAccessToken = () => {
     return token;
 }
 
-userSchema.method.generateRefreshToken = ()=>{
-    const token =  jwt.sign({
+userSchema.methods.generateRefreshToken = function () {
+    const token = jwt.sign({
         id: this._id ,
     }, process.env.REFRESH_TOKEN_SECRET, { expiresIn: process.env.REFRESH_TOKEN_EXPIRY });
 

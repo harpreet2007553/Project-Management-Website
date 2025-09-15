@@ -1,9 +1,11 @@
 import { ApiError } from "../utils/apiError.js";
 import { User } from "../model/user.model.js";
+import jwt from "jsonwebtoken";
 
 export const verifyJWT = async (req, res, next) => {
-  const accessToken = req.cookies.accessToken;
-  const refreshToken = req.cookies.refreshToken;
+  const {accessToken, refreshToken} = req.cookies;
+
+  console.log(accessToken)
 
   if (!accessToken || !refreshToken) {
     throw new ApiError(401, "accessToken and refreshToken both are required");
@@ -11,13 +13,13 @@ export const verifyJWT = async (req, res, next) => {
 
   const decodedAccessToken = jwt.verify(
     accessToken,
-    process.env.ACCESS_TOKEN_KEY
+    process.env.ACCESS_TOKEN_SECRET
   );
 
   if (!decodedAccessToken) {
     const decodedRefreshToken = jwt.verify(
       refreshToken,
-      process.env.REFRESH_TOKEN_KEY
+      process.env.REFRESH_TOKEN_SECRET
     );
     if (!decodedRefreshToken) {
       throw new ApiError(401, "Both tokens are expired");
@@ -27,7 +29,7 @@ export const verifyJWT = async (req, res, next) => {
     next();
   }
 
-  const user = await user.findById(decodedAccessToken.id);
+  const user = await User.findById(decodedAccessToken.id);
   req.user = user._id;
   next();
 

@@ -67,8 +67,8 @@ export const getUserProjects = asyncHandler(async (req, res) => {
 
 export const userInTeamProjects = asyncHandler(async (req, res) => {
   const { projectId } = req.body;
-  if (!username) {
-    throw new ApiError(400, "Username is required to get projects");
+  if (!projectId) {
+    throw new ApiError(400, "Project ID is required to get projects");
   }
 
   const members = await project.aggregate([
@@ -87,7 +87,7 @@ export const userInTeamProjects = asyncHandler(async (req, res) => {
     },
     {
       $project: {
-        members : 1,
+        members: 1,
       },
     },
   ]);
@@ -103,17 +103,38 @@ export const userInTeamProjects = asyncHandler(async (req, res) => {
     .json(new ApiResponse(true, members[0], "Projects fetched successfully"));
 });
 
-export const getProjectDetails = asyncHandler(
-  async (req, res) => {
-    const { projectId } = req.body;
-    if (!projectId) {
-      throw new ApiError(400, "Project ID is required to get project details");
-    }
-
-    const projectDetails = await project.findById(projectId);
-
-    res.json(
-      new ApiResponse(true, projectDetails, "Project details fetched successfully")
-    );
+export const getProjectDetails = asyncHandler(async (req, res) => {
+  const { projectId } = req.body;
+  if (!projectId) {
+    throw new ApiError(400, "Project ID is required to get project details");
   }
-)
+
+  const projectDetails = await project.findById(projectId);
+
+  res.json(
+    new ApiResponse(
+      true,
+      projectDetails,
+      "Project details fetched successfully"
+    )
+  );
+});
+
+export const deleteProject = asyncHandler(async (req, res) => {
+  const { projectId } = req.params;
+
+  if (!projectId) {
+    throw new ApiError(401, "Project ID is required");
+  }
+
+  const deletedProject = await project.findByIdAndDelete(projectId);
+
+  if (!deletedProject) {
+    throw new ApiError(401, "Project not found");
+  }
+
+  res
+    .status(201)
+    .json(new ApiResponse(201, deletedProject, "Project deleted successfully"));
+});
+

@@ -4,98 +4,89 @@ import { ApiError } from "../utils/apiError.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { project } from "../model/project.model.js";
 
-export const addMemberToProject = asyncHandler(
-    async (req , res) => {
-        const { projectId , username } = req.params;
+export const addMemberToProject = asyncHandler(async (req, res) => {
+  const { projectId, username } = req.params;
 
-        if( !projectId && !username){
-            throw new ApiError(400, "ProjectId and username both are required");
-        }
+  if (!projectId && !username) {
+    throw new ApiError(400, "ProjectId and username both are required");
+  }
 
-        const project = await project.findById(projectId)
+  const project = await project.findById(projectId);
 
-        if(!project){
-            throw new ApiError(401, "Project not found")
-        }
+  if (!project) {
+    throw new ApiError(401, "Project not found");
+  }
 
-        const member = await member.create(
-            {
-                project: projectId,
-                member : username
-            }
-        )
+  const createdMember = await member.create({
+    project: projectId,
+    member: username,
+  });
 
-        res
-        .status(200)
-        .json(
-            new ApiResponse(200, member, "Member added successfully")
-        )
-    }
-)
+  if (!createdMember) {
+    throw new ApiError(401, "failed to add member");
+  }
 
-export const removeMemberFromProject = asyncHandler(
-    async (req, res) => {
-        const { projectId , username} = req.params;
+  res
+    .status(200)
+    .json(new ApiResponse(200, createdMember, "Member added successfully"));
+});
 
-        if( !projectId && !username){
-            throw new ApiError(400, "ProjectId and username both are required");
-        }
+export const removeMemberFromProject = asyncHandler(async (req, res) => {
+  const { projectId, username } = req.params;
 
-        const project = await project.findById(projectId)
+  if (!projectId && !username) {
+    throw new ApiError(400, "ProjectId and username both are required");
+  }
 
-        if(!project){
-            throw new ApiError(401, "Project not found")
-        }
+  const project = await project.findById(projectId);
 
-        const member = await member.findOneAndDelete(
-            {
-                project: projectId,
-                member : username
-            }
-        )
+  if (!project) {
+    throw new ApiError(401, "Project not found");
+  }
 
-        res
-        .status(200)
-        .json(
-            new ApiResponse(200, member, "Member removed successfully")
-        )
-    }
-)
+  const member = await member.findOneAndDelete({
+    project: projectId,
+    member: username,
+  });
 
-export const getMembersOfProject = asyncHandler(
-    async (req, res) => {
-        const {projectId} = req.params;
+  res
+    .status(200)
+    .json(new ApiResponse(200, member, "Member removed successfully"));
+});
 
-        if(!projectId){
-            throw new ApiError(400, "ProjectId is required");
-        }
+export const getMembersOfProject = asyncHandler(async (req, res) => {
+  const { projectId } = req.params;
 
-        const members = await project.aggregate(
-            {
-                $match : {
-                    "_id" : projectId,
-                },
-                $lookup : {
-                    from : "member",
-                    localField : "_id",
-                    foreignField : "project",
-                    as : "members"
-                },
-                $project : {
-                    members : 1,
-                }
-            }
-        );
-        if(!members[0].length){
-            throw new ApiError(404, "No members found");
-        }
+  if (!projectId) {
+    throw new ApiError(400, "ProjectId is required");
+  }
 
-        res
-        .status(201)
-        .json(
-            {
-                ...members[0]
-            }
-        )
-    }
-)
+  const members = await project.aggregate([
+    {
+      $match: {
+        _id: projectId,
+      },
+    },
+    {
+      $lookup: {
+        from: "member",
+        localField: "_id",
+        foreignField: "project",
+        as: "members",
+      },
+    },
+    {
+      $project: {
+        members: 1,
+      },
+    },
+  ]);
+  if (!members[0].length) {
+    throw new ApiError(404, "No members found");
+  }
+
+  res.status(201).json({
+    ...members[0],
+  });
+});
+

@@ -16,13 +16,15 @@ export const createProject = asyncHandler(async (req, res) => {
     owner,
   });
 
-  console.log(newProject);
+  if(!newProject){
+    throw new ApiError(500, "Something went wrong while creating project")
+  }
 
-  return res.status(201).json({
-    success: true,
-    message: "Project created successfully",
-    data: newProject,
-  });
+  // console.log(newProject);
+
+  return res.status(201).json(
+    new ApiResponse(201, newProject, "Project created successfully")
+  );
 });
 
 export const getUserProjects = asyncHandler(async (req, res) => {

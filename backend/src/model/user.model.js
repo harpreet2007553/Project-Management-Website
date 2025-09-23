@@ -5,9 +5,9 @@ import jwt from "jsonwebtoken";
 const userSchema = new Schema(
   {
     fullname: {
-        type : String , 
-        required : true ,
-        trim : true,
+      type: String,
+      required: true,
+      trim: true,
     },
     username: {
       type: String,
@@ -15,8 +15,8 @@ const userSchema = new Schema(
       unique: true,
       lowercase: true,
       trim: true,
-      min : 5,
-      max : 20
+      min: 5,
+      max: 20,
     },
     email: {
       type: String,
@@ -29,8 +29,8 @@ const userSchema = new Schema(
       type: String,
       required: true,
     },
-    avatar : {
-        type: String,
+    avatar: {
+      type: String,
     },
     refreshToken: {
       type: String,
@@ -46,27 +46,35 @@ userSchema.pre("save", async function (next) {
   next();
 });
 
-userSchema.methods.isPasswordCorrect = async function(password){
-    return  bcrypt.compare(password, this.password);
-}
+userSchema.methods.isPasswordCorrect = async function (password) {
+  return bcrypt.compare(password, this.password);
+};
 
 userSchema.methods.generateAccessToken = function () {
-    console.log("userid : ",this._id)
-    const token =  jwt.sign({ 
-        id: this._id ,
-        username : this.username ,
-        email : this.email
-    }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: process.env.ACCESS_TOKEN_EXPIRY });
+  console.log("userid : ", this._id);
+  const token = jwt.sign(
+    {
+      id: this._id,
+      username: this.username,
+      email: this.email,
+    },
+    process.env.ACCESS_TOKEN_SECRET,
+    { expiresIn: process.env.ACCESS_TOKEN_EXPIRY }
+  );
 
-    return token;
-}
+  return token;
+};
 
 userSchema.methods.generateRefreshToken = function () {
-    const token = jwt.sign({
-        id: this._id ,
-    }, process.env.REFRESH_TOKEN_SECRET, { expiresIn: process.env.REFRESH_TOKEN_EXPIRY });
+  const token = jwt.sign(
+    {
+      id: this._id,
+    },
+    process.env.REFRESH_TOKEN_SECRET,
+    { expiresIn: process.env.REFRESH_TOKEN_EXPIRY }
+  );
 
-    return token ; 
-}
+  return token;
+};
 
 export const User = mongooose.model("User", userSchema);

@@ -30,7 +30,7 @@ const createTask = asyncHandler(
 
 const deleteTask = asyncHandler(
     async ( req, res)=> {
-        const { taskId } = req.params;
+        const { taskId } = req.query;
         if(!taskId){
             throw new ApiError(401, "Task id is required")
         }
@@ -49,7 +49,7 @@ const deleteTask = asyncHandler(
 
 const getAllTasks = asyncHandler(
     async (req, res) => {
-        const { topicId } = req.body;
+        const { topicId } = req.query;
         if(!topicId){
             throw new ApiError(401, "Topic ID is required")
         }

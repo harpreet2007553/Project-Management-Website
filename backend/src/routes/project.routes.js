@@ -5,8 +5,8 @@ const router = Router();
 
 router.post("/create-project", createProject);
 router.get("/get-own-projects", getUserProjects)
-router.get("/users-in-team-project", userInTeamProjects)
-router.get("/get-project-details", getProjectDetails)
-router.get("/delete-project", deleteProject)
+router.get("/users-in-team-project/:projectId", userInTeamProjects)
+router.get("/get-project-details/:projectId", getProjectDetails)
+router.get("/delete-project/:projectId", deleteProject)
 
 export default router;

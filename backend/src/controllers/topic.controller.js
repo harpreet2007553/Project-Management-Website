@@ -25,7 +25,7 @@ export const createTopic = asyncHandler(async (req, res) => {
 });
 
 export const getAllProjectTopics = asyncHandler(async (req, res) => {
-  const { projectId } = req.params;
+  const { projectId } = req.query;
 
   if (!projectId) {
     throw new ApiError(401, "Project ID is required");
@@ -62,7 +62,7 @@ export const getAllProjectTopics = asyncHandler(async (req, res) => {
 });
 
 export const deleteTopic = asyncHandler(async (req, res) => {
-  const { topicId } = req.params;
+  const { topicId } = req.query;
 
   if (!topicId) {
     throw new ApiError(401, "Topic ID is required");

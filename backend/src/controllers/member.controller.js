@@ -5,7 +5,7 @@ import { asyncHandler } from "../utils/asyncHandler.js";
 import { project } from "../model/project.model.js";
 
 export const addMemberToProject = asyncHandler(async (req, res) => {
-  const { projectId, username } = req.params;
+  const { projectId, username } = req.query;
 
   if (!projectId && !username) {
     throw new ApiError(400, "ProjectId and username both are required");
@@ -32,7 +32,7 @@ export const addMemberToProject = asyncHandler(async (req, res) => {
 });
 
 export const removeMemberFromProject = asyncHandler(async (req, res) => {
-  const { projectId, username } = req.params;
+  const { projectId, username } = req.query;
 
   if (!projectId && !username) {
     throw new ApiError(400, "ProjectId and username both are required");
@@ -55,7 +55,7 @@ export const removeMemberFromProject = asyncHandler(async (req, res) => {
 });
 
 export const getMembersOfProject = asyncHandler(async (req, res) => {
-  const { projectId } = req.params;
+  const { projectId } = req.query;
 
   if (!projectId) {
     throw new ApiError(400, "ProjectId is required");

@@ -5,6 +5,13 @@ import jwt from "jsonwebtoken";
 export const verifyJWT = async (req, res, next) => {
   const {accessToken, refreshToken} = req.cookies;
 
+  if(!accessToken){
+    accessToken = req.header("Authorization")?.replace("Bearer ", "");
+  }
+  if(!refreshToken){
+    refreshToken = req.header("x-refresh-token");
+  }
+
   console.log(accessToken)
 
   if (!accessToken || !refreshToken) {

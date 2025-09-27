@@ -68,7 +68,7 @@ export const getUserProjects = asyncHandler(async (req, res) => {
 });
 
 export const userInTeamProjects = asyncHandler(async (req, res) => {
-  const { projectId } = req.body;
+  const { projectId } = req.params;
   if (!projectId) {
     throw new ApiError(400, "Project ID is required to get projects");
   }
@@ -106,7 +106,7 @@ export const userInTeamProjects = asyncHandler(async (req, res) => {
 });
 
 export const getProjectDetails = asyncHandler(async (req, res) => {
-  const { projectId } = req.body;
+  const { projectId } = req.params;
   if (!projectId) {
     throw new ApiError(400, "Project ID is required to get project details");
   }

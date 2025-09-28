@@ -52,13 +52,13 @@ export const getAllProjectTopics = asyncHandler(async (req, res) => {
     }
   ]);
 
-  if (!topics[0].length) {
+  if (!topics[0]) {
     throw new ApiError(404, "No topics found");
   }
 
   res
     .status(201)
-    .json(new ApiResponse(201, topics[0], "Topics fetched successfully"));
+    .json(new ApiResponse(201, "Topics fetched successfully", topics[0]));
 });
 
 export const deleteTopic = asyncHandler(async (req, res) => {
@@ -76,5 +76,5 @@ export const deleteTopic = asyncHandler(async (req, res) => {
 
   res
     .status(201)
-    .json(new ApiResponse(201, deletedTopic, "Topic deleted successfully"));
+    .json(new ApiResponse(201, "Topic deleted successfully", deletedTopic));
 });

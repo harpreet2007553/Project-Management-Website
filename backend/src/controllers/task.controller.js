@@ -23,7 +23,7 @@ const createTask = asyncHandler(
             throw new ApiError(401, "failed to create task")
         }
         res.status(201).json(
-            new ApiResponse(201, newTask, "Task created successfully")
+            new ApiResponse(201, "Task created successfully", newTask)
         )
     }
 )
@@ -42,7 +42,7 @@ const deleteTask = asyncHandler(
         res
         .status(201)
         .json(
-            new ApiResponse(201, deletedTask, "Task deleted successfully")
+            new ApiResponse(201, "Task deleted successfully", deletedTask)
         )
     }
 )
@@ -78,7 +78,7 @@ const getAllTasks = asyncHandler(
             throw new ApiError(404, "No tasks found")
         }
         res.status(201).json(
-            new ApiResponse(201, tasks[0], "Tasks fetched successfully")
+            new ApiResponse(201, "Tasks fetched successfully", tasks[0])
         )
     }
 )

@@ -3,6 +3,7 @@ import { asyncHandler } from "../utils/asyncHandler.js";
 import { ApiError } from "../utils/apiError.js";
 import { project } from "../model/project.model.js";
 import { User } from "../model/user.model.js";
+import { member } from "../model/member.model.js";
 
 export const createProject = asyncHandler(async (req, res) => {
   const { title, description, owner } = req.body;
@@ -64,45 +65,48 @@ export const getUserProjects = asyncHandler(async (req, res) => {
 
   res
     .status(200)
-    .json(new ApiResponse(true, project[0], "Projects fetched successfully"));
+    .json(new ApiResponse(true, "Projects fetched successfully", project[0]));
 });
 
 export const userInTeamProjects = asyncHandler(async (req, res) => {
-  const { projectId } = req.params;
-  if (!projectId) {
-    throw new ApiError(400, "Project ID is required to get projects");
+  const { username } = req.params;
+  if (!username) {
+    throw new ApiError(400, "Username is required to get projects");
   }
 
-  const members = await project.aggregate([
+  const user = await User.findOne({ username });
+
+  const teamProjects = await User.aggregate([
     {
       $match: {
-        projectId,
+        _id : user._id
       },
     },
     {
       $lookup: {
-        from: "member",
+        from: "members",
         localField: "_id",
         foreignField: "member",
-        as: "members",
+        as: "projects",
       },
     },
     {
       $project: {
-        members: 1,
+        username: 1,
+        projects : 1,
       },
     },
   ]);
 
-  if (!members?.length) {
+  if (!teamProjects[0]) {
     throw new ApiError(404, "No members in your project");
   }
 
-  console.log(members);
+  console.log(teamProjects);
 
   res
     .status(200)
-    .json(new ApiResponse(true, members[0], "Projects fetched successfully"));
+    .json(new ApiResponse(true, "Projects fetched successfully",  teamProjects[0]));
 });
 
 export const getProjectDetails = asyncHandler(async (req, res) => {
@@ -116,8 +120,8 @@ export const getProjectDetails = asyncHandler(async (req, res) => {
   res.json(
     new ApiResponse(
       true,
-      projectDetails,
-      "Project details fetched successfully"
+      "Project details fetched successfully",
+      projectDetails
     )
   );
 });
@@ -137,6 +141,6 @@ export const deleteProject = asyncHandler(async (req, res) => {
 
   res
     .status(201)
-    .json(new ApiResponse(201, deletedProject, "Project deleted successfully"));
+    .json(new ApiResponse(201,  "Project deleted successfully", deletedProject));
 });
 

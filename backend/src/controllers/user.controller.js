@@ -30,7 +30,7 @@ const generateAccessRefreshToken = async (userId) => {
 
 const requestNewAccessRefreshToken = asyncHandler(async (req, res) => {
   const { userId } = req.body;
-  const { accessToken, refreshToken } = generateAccessRefreshToken(userId);
+  const { accessToken, refreshToken } = await generateAccessRefreshToken(userId);
 
   const options = {
     httpOnly: true,

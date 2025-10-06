@@ -3,7 +3,7 @@ import { createSlice } from "@reduxjs/toolkit";
 interface task{
     task_id : string
     text : string
-    assignedTo : [{user_id : string, username : string}]
+    assignedTo : {user_id : string, username : string}[]
     due_date : Date
     isCompleted : boolean
     topic_id : string
@@ -114,3 +114,7 @@ export const taskSlice = createSlice({
         }
     }
 })
+
+export const { setProjects, removeProject, updateProject } = projectSlice.actions;
+export const { setTopics, removeTopic, updateTopic } = topicSlice.actions;
+export const { setTasks, removeTask, updateTask, addMember } = taskSlice.actions;

@@ -24,7 +24,7 @@ export const createProject = asyncHandler(async (req, res) => {
   // console.log(newProject);
 
   return res.status(201).json(
-    new ApiResponse(201, newProject, "Project created successfully")
+    new ApiResponse(201, "Project created successfully", newProject)
   );
 });
 

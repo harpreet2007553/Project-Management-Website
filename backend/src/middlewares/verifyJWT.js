@@ -3,13 +3,13 @@ import { User } from "../model/user.model.js";
 import jwt from "jsonwebtoken";
 
 export const verifyJWT = async (req, res, next) => {
-  const {accessToken, refreshToken} = req.cookies;
+  let {accessToken, refreshToken} = req.cookies;
 
   if(!accessToken){
-    accessToken = req.header("Authorization")?.replace("Bearer ", "");
+    accessToken = req.header("Authorization")?.trim().replace("Bearer ", "");
   }
   if(!refreshToken){
-    refreshToken = req.header("x-refresh-token");
+    refreshToken = req.header("x-refresh-token")?.trim();
   }
 
   console.log(accessToken)

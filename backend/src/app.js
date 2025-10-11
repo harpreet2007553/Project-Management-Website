@@ -6,12 +6,13 @@ import projectRoute from "./routes/project.routes.js";
 import memberRoute from "./routes/members.routes.js";
 import topicRoute from "./routes/topics.routes.js";
 import taskRoute from "./routes/task.routes.js";
+import { ApiError } from "./utils/apiError.js";
 
 const app = express();
 
 app.use(
   cors({
-    origin: process.env.CORS_ORIGIN,
+    origin: '*',
     credentials: true,
   })
 );
@@ -20,6 +21,23 @@ app.use(express.json({ limit: "16kb" }));
 app.use(express.urlencoded({ extended: true, limit: "16kb" }));
 app.use(express.static("public"));
 app.use(cookieParser());
+app.use((err, req, res, next) => {
+  if (err instanceof ApiError) {
+    return res.status(err.statusCode).json({
+      message: err.message,
+      errors: err.errors,
+      stack: err.stack, // optional: don't send in production
+    });
+  }
+
+  // fallback for other errors
+  return res.status(500).json({
+    message: "Internall Server Error",
+    errors: [],
+  });
+
+});
+
 
 app.use("/api/v1/users", userRoute);
 app.use("/api/v1/projects", projectRoute);

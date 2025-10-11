@@ -57,9 +57,7 @@ export const registerUser = asyncHandler(async (req, res) => {
     password.trim() === "" ||
     email.trim() === ""
   ) {
-    throw new Error(
-      "All fields among username, fullname, password and email are required"
-    );
+    throw new ApiError(404, "All the fields are required")
   }
 
   const existedUser = await User.findOne({

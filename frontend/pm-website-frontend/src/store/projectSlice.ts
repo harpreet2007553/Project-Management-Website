@@ -20,6 +20,7 @@ interface Project {
     // Define your project properties here, for example:
     project_id: string
     name: string
+    description: string;
     // Add other fields as needed
 }
 

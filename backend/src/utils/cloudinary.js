@@ -32,7 +32,7 @@ export const uploadOnCloudinary = async (localFilePath) => {
   } catch (error) {
     console.log("Something went wrong", error);
     fs.unlinkSync(localFilePath);
-    console.log("testing...");
+    // console.log("testing...");
     throw new ApiError(
       501,
       "Error while uploading avatar to cloudinary",

@@ -3,6 +3,7 @@ import { asyncHandler } from "../utils/asyncHandler.js";
 import jwt from "jsonwebtoken";
 import { ApiError } from "../utils/apiError.js";
 import { uploadOnCloudinary } from "../utils/cloudinary.js";
+import fs from "fs";
 
 const generateAccessRefreshToken = async (userId) => {
   try {
@@ -30,7 +31,9 @@ const generateAccessRefreshToken = async (userId) => {
 
 const requestNewAccessRefreshToken = asyncHandler(async (req, res) => {
   const { userId } = req.body;
-  const { accessToken, refreshToken } = await generateAccessRefreshToken(userId);
+  const { accessToken, refreshToken } = await generateAccessRefreshToken(
+    userId
+  );
 
   const options = {
     httpOnly: true,
@@ -50,6 +53,12 @@ const requestNewAccessRefreshToken = asyncHandler(async (req, res) => {
 export const registerUser = asyncHandler(async (req, res) => {
   // console.log("testing");
   const { username, fullname, password, email } = req.body;
+  const avatarPath =
+    req.files?.avatar &&
+    Array.isArray(req.files.avatar) &&
+    req.files.avatar.length > 0
+      ? req.files.avatar[0].path
+      : undefined;
 
   if (
     username.trim() === "" ||
@@ -57,7 +66,8 @@ export const registerUser = asyncHandler(async (req, res) => {
     password.trim() === "" ||
     email.trim() === ""
   ) {
-    throw new ApiError(404, "All the fields are required")
+    fs.unlinkSync(avatarPath)
+    throw new ApiError(404, "All the fields are required");
   }
 
   const existedUser = await User.findOne({
@@ -65,17 +75,11 @@ export const registerUser = asyncHandler(async (req, res) => {
   });
 
   if (existedUser) {
+    fs.unlinkSync(avatarPath)
     throw new ApiError(400, "User with this username or email already exists");
   }
 
   // console.log("test");
-
-  const avatarPath =
-    req.files?.avatar &&
-    Array.isArray(req.files.avatar) &&
-    req.files.avatar.length > 0
-      ? req.files.avatar[0].path
-      : undefined;
 
   // console.log("Avatar path:", avatarPath);
 
@@ -129,7 +133,7 @@ export const registerUser = asyncHandler(async (req, res) => {
 export const loginUser = asyncHandler(async (req, res) => {
   const { username, email, password } = req.body;
 
-  if ((!username && !email) || !password) {
+  if ((!username || !email) && !password) {
     throw new ApiError(
       400,
       "Username or email and password are required to login"
@@ -139,6 +143,8 @@ export const loginUser = asyncHandler(async (req, res) => {
   const existedUser = await User.findOne({
     $or: [{ username }, { email }],
   });
+
+  console.log(existedUser)
 
   if (!existedUser) {
     throw new ApiError(401, "User not found");
@@ -204,11 +210,10 @@ export const logoutUser = asyncHandler(async (req, res) => {
 });
 
 export const getUser = asyncHandler(async (req, res) => {
-  
   const user = await User.findById(req.user._id).select(
     "-password -refreshToken"
   );
-  
+
   res.status(200).json({
     success: true,
     data: user,
